@@ -1,14 +1,20 @@
 package com.example.weather
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.URL
@@ -16,17 +22,46 @@ import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.log
+
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     val CITY: String = "Denver,United States"
     val API: String = "c9e5f9c9bbeb12fcfcee082daff2a77c"
+    var LAT:String =""
+     var LANG:String =""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        getLocation()
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         weatherTask().execute()
     }
+    private fun getLocation(){
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
 
+            return
+        }
+        val location =    fusedLocationProviderClient. lastLocation
+        location.addOnSuccessListener{
+            if (it != null) {
+                    LAT = it.latitude.toString()
+                    LANG = it.longitude.toString()
+//                Toast.makeText(this@MainActivity,"error:$LAT : $LANG",Toast.LENGTH_LONG).show()
+                    Log.e("WeatherApp", "WeatherTask: Exception - $LAT")
+                }
+        }
+    }
     inner class weatherTask() : AsyncTask<String, Void, String>() {
         override fun onPreExecute() {
             super.onPreExecute()
@@ -39,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             var response: String?
             try {
                 response =
-                    URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=c9e5f9c9bbeb12fcfcee082daff2a77c")
+                    URL("https://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LANG&units=metric&appid=c9e5f9c9bbeb12fcfcee082daff2a77c")
                         .readText(Charsets.UTF_8)
             } catch (e: Exception) {
                 response = null
@@ -88,6 +123,7 @@ class MainActivity : AppCompatActivity() {
             }
             catch (e: Exception){
                 Toast.makeText(this@MainActivity,"error:$e",Toast.LENGTH_LONG).show()
+                Log.d("WeatherApp", "Error"+e.message.toString())
                 findViewById<ProgressBar>(R.id.loader).visibility=View.GONE
                 findViewById<TextView>(R.id.errorTest).visibility=View.VISIBLE
             }
