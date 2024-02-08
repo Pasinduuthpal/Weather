@@ -1,9 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.weather
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,18 +12,15 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.VideoView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.json.JSONObject
-import java.lang.Exception
 import java.net.URL
-import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        weatherTask().execute()
+        weatherCollectTask().execute()
     }
     private fun getLocation(){
         if (ActivityCompat.checkSelfPermission(
@@ -48,10 +46,7 @@ class MainActivity : AppCompatActivity() {
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            return
-        }
+        ) return
         val location =    fusedLocationProviderClient. lastLocation
         location.addOnSuccessListener{
             if (it != null) {
@@ -62,7 +57,8 @@ class MainActivity : AppCompatActivity() {
                 }
         }
     }
-    inner class weatherTask() : AsyncTask<String, Void, String>() {
+    inner class weatherCollectTask() : AsyncTask<String, Void, String>() {
+        @Deprecated("Deprecated in Java")
         override fun onPreExecute() {
             super.onPreExecute()
             findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
@@ -70,22 +66,22 @@ class MainActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.errorTest).visibility = View.GONE
         }
 
-        override fun doInBackground(vararg params: String?): String? {
-            var response: String?
-            try {
-                response =
-                    URL("https://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LANG&units=metric&appid=c9e5f9c9bbeb12fcfcee082daff2a77c")
-                        .readText(Charsets.UTF_8)
+        @Deprecated("Deprecated in Java")
+        public override fun doInBackground(vararg params: String?): String? {
+            val response: String? = try {
+                URL("https://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LANG&units=metric&appid=c9e5f9c9bbeb12fcfcee082daff2a77c")
+                    .readText(Charsets.UTF_8)
             } catch (e: Exception) {
-                response = null
+                null
             }
             return response
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             try {
-                val jasonOgj = JSONObject(result)
+                val jasonOgj = JSONObject(result.toString())
                 val main = jasonOgj.getJSONObject("main")
                 val sys = jasonOgj.getJSONObject("sys")
                 val wind = jasonOgj.getJSONObject("wind")
@@ -108,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
                 findViewById<TextView>(R.id.address).text = address
                 findViewById<TextView>(R.id.updatedAt).text = updatedAtText
-                findViewById<TextView>(R.id.status).text = weatherDescription.capitalize()
+                findViewById<TextView>(R.id.status).text = weatherDescription.capitalize(Locale.ROOT)
                 findViewById<TextView>(R.id.temp).text = temp
                 findViewById<TextView>(R.id.temp_min).text = tempMin
                 findViewById<TextView>(R.id.temp_max).text = tempMax
