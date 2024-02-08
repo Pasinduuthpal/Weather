@@ -25,7 +25,6 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    val CITY: String = "Denver,United States"
     val API: String = "c9e5f9c9bbeb12fcfcee082daff2a77c"
     var LAT:String =""
      var LANG:String =""
