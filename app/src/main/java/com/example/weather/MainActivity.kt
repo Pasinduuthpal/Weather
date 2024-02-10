@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             if (it != null) {
                     LAT = it.latitude.toString()
                     LANG = it.longitude.toString()
-//                Toast.makeText(this@MainActivity,"error:$LAT : $LANG",Toast.LENGTH_LONG).show()
                     Log.e("WeatherApp", "WeatherTask: Exception - $LAT")
                 }
         }
