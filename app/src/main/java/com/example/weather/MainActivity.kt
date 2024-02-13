@@ -27,7 +27,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     val API: String = "c9e5f9c9bbeb12fcfcee082daff2a77c"
     var LAT:String =""
-     var LANG:String =""
+     var LANG: String
+         get() = ""
+         set(value) = TODO()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
